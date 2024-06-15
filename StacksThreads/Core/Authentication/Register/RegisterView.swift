@@ -54,7 +54,7 @@ struct RegisterView: View {
                         .background(Color.white)
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: /*@START_MENU_TOKEN@*/1.0/*@END_MENU_TOKEN@*/))
                     
-                    TextField("Username", text: $viewModel.username)
+                    TextField("Usernames", text: $viewModel.username)
                         .textInputAutocapitalization(.never)
                         .padding()
                         .padding(.vertical, 2)
