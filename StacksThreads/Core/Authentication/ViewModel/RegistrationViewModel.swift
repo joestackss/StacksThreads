@@ -2,19 +2,32 @@
 //  RegistrationViewModel.swift
 //  StacksThreads
 //
-//  Created by Popoola Joseph Olamide on 15/06/2024.
+//  Created by Popoola Joseph Olamide on 17/06/2024.
 //
 
-import Foundation
+import FirebaseAuth
 
 class RegistrationViewModel: ObservableObject {
-    @Published  var email: String = ""
-    @Published var password: String = ""
-    @Published var fullname: String = ""
-    @Published var username: String = ""
+    @Published var email = ""
+    @Published var password = ""
+    @Published var fullname = ""
+    @Published var username = ""
+    @Published var isLoading = false
     
     @MainActor
     func createUser() async throws {
-        try await AuthService.shared.createUser(withEmail: email, password: password, fullname: fullname, username: username)
+        isLoading = true
+        defer { isLoading = false }
+                
+        do {
+            try await AuthService.shared.createUser(
+                withEmail: email,
+                password: password,
+                fullname: fullname,
+                username: username
+            )
+        } catch {
+            print("DEBUG: Failed to create user with error \(error.localizedDescription)")
+        }
     }
 }

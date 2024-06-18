@@ -2,17 +2,22 @@
 //  LoginViewModel.swift
 //  StacksThreads
 //
-//  Created by Popoola Joseph Olamide on 15/06/2024.
+//  Created by Popoola Joseph Olamide on 17/06/2024.
 //
 
-import Foundation
+import FirebaseAuth
 
 class LoginViewModel: ObservableObject {
-    @Published var email: String = ""
-    @Published var password: String = ""
+    @Published var email = ""
+    @Published var password = ""
     
     @MainActor
-    func loginUser() async throws {
-        try await AuthService.shared.login(withEmail: email, password: password)
+    func login() async throws {
+        
+        do {
+            try await AuthService.shared.login(withEmail: email, password: password)
+        } catch {
+            print("DEBUG: Error \(error.localizedDescription)")
+        }
     }
 }
