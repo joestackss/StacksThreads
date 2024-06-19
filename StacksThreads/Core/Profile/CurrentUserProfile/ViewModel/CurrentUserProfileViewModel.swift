@@ -16,10 +16,26 @@ class CurrentUserProfileViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var currentUser: User?
+    @Published var currentUser: User? {
+        didSet {
+            if let user = currentUser {
+                bio = user.bio ?? ""
+                link = user.link ?? ""
+            }
+        }
+    }
     @Published var profileImage: Image?
     @Published var bio = ""
     @Published var link = ""
+    
+    
+    @Published var bioUserDataError: String? = nil
+    @Published var linkUserDataError: String? = nil
+    
+    
+    @Published var isUpdateUserDataLoading = false
+    @Published var updateUserErrorMessage: String? = nil
+    
     
     @Published var selectedImage: PhotosPickerItem? {
         didSet { Task { await loadImage(fromItem: selectedImage) } }
@@ -40,6 +56,9 @@ class CurrentUserProfileViewModel: ObservableObject {
 extension CurrentUserProfileViewModel {
     
     func updateUserData() async throws {
+        isUpdateUserDataLoading = true
+        defer { isUpdateUserDataLoading = false }
+        
         guard let user = currentUser else { return }
         var data: [String: String] = [:]
         
@@ -57,8 +76,14 @@ extension CurrentUserProfileViewModel {
             try await updateProfileImage(uiImage)
             data["profileImageUrl"] = currentUser?.profileImageUrl
         }
+        do {
+            try await FirestoreConstants.UserCollection.document(user.id).updateData(data)
+        } catch {
+            print("DEBUG: Error \(error.localizedDescription)")
+            
+            updateUserErrorMessage = error.localizedDescription
+        }
         
-        try await FirestoreConstants.UserCollection.document(user.id).updateData(data)
     }
 }
 

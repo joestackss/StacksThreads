@@ -26,10 +26,10 @@ struct EditProfileView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Name")
+                            Text(user?.fullname ?? "")
                                 .fontWeight(.semibold)
                             
-                            Text(user?.fullname ?? "")
+                            Text(user?.username ?? "")
                         }
                         .font(.footnote)
 
@@ -75,6 +75,12 @@ struct EditProfileView: View {
                         .font(.footnote)
                     
                     Divider()
+                    
+                    if viewModel.isUpdateUserDataLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: Color.theme.primaryText))
+                            .padding()
+                    }
                 }
                 .navigationTitle("Edit Profile")
                 .navigationBarTitleDisplayMode(.inline)
@@ -105,6 +111,15 @@ struct EditProfileView: View {
                 }
                 .background(Color.theme.primaryBackground)
                 .padding()
+            }
+            .alert(isPresented: .constant(viewModel.updateUserErrorMessage != nil)) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(viewModel.updateUserErrorMessage ?? "Unknown error"),
+                    dismissButton: .default(Text("OK")) {
+                        viewModel.updateUserErrorMessage = nil
+                    }
+                )
             }
         }
     }

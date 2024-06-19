@@ -30,16 +30,31 @@ struct RegistrationView: View {
                     .autocapitalization(.none)
                     .modifier(ThreadsTextFieldModifier())
                 
+                if let emailError = viewModel.emailError {
+                    Text(emailError).foregroundColor(.red).font(.footnote)
+                }
+                
                 SecureField("Enter your password", text: $viewModel.password)
                     .modifier(ThreadsTextFieldModifier())
+                
+                if let passwordError = viewModel.passwordError {
+                    Text(passwordError).foregroundColor(.red).font(.footnote)
+                }
                 
                 TextField("Enter your full name", text: $viewModel.fullname)
                     .autocapitalization(.none)
                     .modifier(ThreadsTextFieldModifier())
                 
+                if let fullnameError = viewModel.fullnameError {
+                    Text(fullnameError).foregroundColor(.red).font(.footnote)
+                }
+                
                 TextField("Enter your username", text: $viewModel.username)
                     .autocapitalization(.none)
                     .modifier(ThreadsTextFieldModifier())
+                if let usernameError = viewModel.usernameError {
+                    Text(usernameError).foregroundColor(.red).font(.footnote)
+                }
             }
             
             if viewModel.isLoading {
@@ -74,6 +89,15 @@ struct RegistrationView: View {
                 .font(.footnote)
             }
             .padding(.vertical, 16)
+        }
+        .alert(isPresented: .constant(viewModel.errorMessage != nil)) {
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.errorMessage ?? "Unknown error"),
+                dismissButton: .default(Text("OK")) {
+                    viewModel.errorMessage = nil
+                }
+            )
         }
     }
 }
